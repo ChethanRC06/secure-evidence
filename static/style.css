@@ -1,0 +1,370 @@
+/* Secure Digital Evidence Transfer: interface styles.
+   Works with the existing app.js (same class names). System fonts only: the server's
+   Content-Security-Policy blocks web fonts and inline styles. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #eceff4;
+  --surface: #ffffff;
+  --surface-2: #f4f6f9;
+  --ink: #162033;
+  --mute: #586377;
+  --line: #d6dce6;
+  --btn: #162033;
+  --btn-ink: #ffffff;
+  --amber: #f2b01e;
+  --focus: #b87d00;
+  --ok: #0d7a4e;
+  --bad: #b3261e;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c111b;
+    --surface: #141b29;
+    --surface-2: #101623;
+    --ink: #e7ecf6;
+    --mute: #95a2ba;
+    --line: #263149;
+    --btn: #f2b01e;
+    --btn-ink: #14181f;
+    --focus: #f2b01e;
+    --ok: #4cd694;
+    --bad: #ff8a80;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font: 15px/1.55 var(--sans);
+  color: var(--ink);
+  background: var(--bg);
+}
+
+h1, h2 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.005em; }
+h2 { font-size: 18px; line-height: 1.3; margin: 0 0 14px; }
+p { margin: 0 0 12px; }
+a { color: inherit; }
+
+/* ---------- top bar: tamper-tape strip + brand ---------- */
+.topbar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 28px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: repeating-linear-gradient(135deg, var(--amber) 0 11px, var(--ink) 11px 22px);
+}
+.topbar h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 19px;
+}
+.mark { flex: none; color: var(--ink); }
+
+#who { display: flex; align-items: center; gap: 12px; }
+#who .muted { font-size: 14px; white-space: nowrap; }
+#who button { white-space: nowrap; }
+
+/* ---------- page shell ---------- */
+.shell {
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+  display: grid;
+  gap: 24px;
+}
+
+#app { display: grid; gap: 16px; align-content: start; min-width: 0; }
+
+.foot {
+  padding: 18px 24px 28px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mute);
+}
+
+.noscript { margin: 24px; padding: 14px; border: 1px solid var(--bad); border-radius: 6px; }
+
+/* ---------- signed-out intro (hidden once someone is signed in) ---------- */
+.intro { display: none; }
+
+body:has(#who:empty) .shell {
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 400px);
+  align-items: center;
+  gap: 56px;
+  padding-top: 56px;
+}
+body:has(#who:empty) .intro { display: block; }
+
+.intro h2 {
+  font-size: clamp(26px, 3.4vw, 38px);
+  line-height: 1.15;
+  margin-bottom: 16px;
+  max-width: 17em;
+}
+.intro > p { max-width: 34em; color: var(--mute); font-size: 16px; }
+.intro dl { margin: 26px 0 0; display: grid; gap: 14px; max-width: 34em; }
+.intro dt { font-weight: 600; }
+.intro dd { margin: 2px 0 0; color: var(--mute); }
+.intro dl > div, .intro dt, .intro dd { min-width: 0; }
+.intro dt { padding-left: 14px; border-left: 3px solid var(--amber); }
+.intro dd { padding-left: 17px; }
+
+/* ---------- cards ---------- */
+.card {
+  position: relative;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  min-width: 0;
+}
+.card > p.muted { font-size: 14px; margin-bottom: 4px; }
+
+/* signed-in layout: key panel is a side column next to the work area */
+#app:has(input[type="file"][accept]) {
+  grid-template-columns: minmax(250px, 310px) minmax(0, 1fr);
+  gap: 16px 20px;
+}
+#app:has(input[type="file"][accept]) > * { grid-column: 2; }
+#app:has(input[type="file"][accept]) > .card:has(input[type="file"][accept]) {
+  grid-column: 1;
+  grid-row: 1 / span 6;
+  position: sticky;
+  top: 16px;
+  align-self: start;
+  background: var(--surface-2);
+}
+
+/* sign-in card */
+#app:has(input[type="password"]) { width: 100%; }
+.card:has(input[type="password"]) { padding: 26px; }
+.card:has(input[type="password"]) h2 { font-size: 22px; margin-bottom: 6px; }
+.card:has(input[type="password"]) button { width: 100%; }
+
+/* ---------- forms ---------- */
+label { display: block; margin: 14px 0 5px; font-size: 13px; font-weight: 600; color: var(--mute); }
+.card > h2 + label { margin-top: 4px; }
+
+input, select, button { font: inherit; }
+
+input[type="text"], input[type="password"], select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  color: var(--mute);
+  font-size: 14px;
+  background: var(--bg);
+  border: 1px dashed var(--mute);
+  border-radius: 6px;
+  cursor: pointer;
+}
+input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 7px 12px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button {
+  display: inline-block;
+  margin-top: 16px;
+  min-height: 40px;
+  padding: 9px 18px;
+  font-weight: 600;
+  color: var(--btn-ink);
+  background: var(--btn);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: filter 0.12s ease, background-color 0.12s ease;
+}
+button:hover { filter: brightness(1.12); }
+button:active { filter: brightness(0.95); }
+button:disabled { opacity: 0.55; cursor: progress; filter: none; }
+
+button.ghost {
+  margin: 0;
+  min-height: 36px;
+  padding: 7px 13px;
+  color: var(--ink);
+  background: transparent;
+  border-color: var(--line);
+}
+button.ghost:hover { filter: none; background: var(--bg); border-color: var(--mute); }
+
+#who button.ghost { min-height: 34px; padding: 5px 12px; }
+.card > .row { margin-top: 14px; }
+.card > .row > button.ghost { width: 100%; }
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+input:focus-visible, select:focus-visible { outline-offset: 0; border-color: var(--focus); }
+
+/* ---------- text helpers ---------- */
+.mono { font-family: var(--mono); font-size: 12px; line-height: 1.5; word-break: break-all; }
+.muted { color: var(--mute); }
+.ok { color: var(--ok); }
+.bad { color: var(--bad); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* fingerprint under "My key" reads as a labelled value */
+.card > div.muted { margin-top: 10px; font-size: 13px; overflow-wrap: anywhere; }
+.card > div.muted .mono { display: block; margin-top: 4px; color: var(--ink); }
+
+/* ---------- messages ---------- */
+.msg {
+  margin-top: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+.msg.ok  { border-color: var(--ok);  background: color-mix(in srgb, var(--ok) 10%, var(--surface)); }
+.msg.bad { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, var(--surface)); }
+#app > div > .msg { margin-top: 0; }
+
+/* ---------- tables ---------- */
+table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { padding: 11px 10px; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td:nth-child(2) { min-width: 11em; white-space: normal; overflow-wrap: break-word; }
+th { font-size: 13px; font-weight: 600; color: var(--mute); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td:first-child, th:first-child { padding-left: 0; }
+td:last-child, th:last-child { padding-right: 0; }
+td:last-child:has(button) { text-align: right; }
+tr:hover td { background: color-mix(in srgb, var(--amber) 8%, transparent); }
+
+/* ---------- verified result: the stamped seal ---------- */
+#app > div > .card {
+  border: 2px solid var(--ok);
+  background: color-mix(in srgb, var(--ok) 5%, var(--surface));
+}
+#app > div > .card::after {
+  content: "\2713";
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  font: 700 28px/1 var(--sans);
+  color: var(--ok);
+  border: 3px double var(--ok);
+  border-radius: 50%;
+  transform: rotate(-9deg);
+  opacity: 0.9;
+}
+#app > div > .card h2 { overflow-wrap: anywhere; }
+#app > div > .card > h2,
+#app > div > .card > div:first-of-type { margin-right: 76px; }
+#app > div > .card > p.muted { margin: 14px 0 2px; font-size: 13px; }
+#app > div > .card .mono { color: var(--ink); }
+#app > div > .card > div:first-of-type .ok { font-weight: 600; }
+#app > div > .card button { margin-top: 18px; }
+
+/* ---------- previews ---------- */
+.preview { margin-top: 16px; }
+.preview:empty { display: none; }
+.preview img, .preview video {
+  display: block;
+  max-width: 100%;
+  max-height: 460px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+.preview audio { width: 100%; }
+pre {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  font: 13px/1.5 var(--mono);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+/* ---------- admin audit log: dense, scrolls sideways when needed ---------- */
+#app > .card:only-child table { font-size: 13px; }
+#app > .card:only-child td { white-space: normal; min-width: 0; }
+#app > .card:only-child td:nth-child(-n+4) { white-space: nowrap; }
+#app > .card:only-child .mono, #app > .card:only-child td { overflow-wrap: anywhere; }
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 880px) {
+  body:has(#who:empty) .shell { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-top: 32px; }
+  body:has(#who:empty) #app { order: -1; }
+  body:has(#who:empty) .intro dl { display: none; }
+  #app:has(input[type="file"][accept]) { grid-template-columns: minmax(0, 1fr); }
+  #app:has(input[type="file"][accept]) > *,
+  #app:has(input[type="file"][accept]) > .card:has(input[type="file"][accept]) {
+    grid-column: 1;
+    grid-row: auto;
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 18px 16px 12px; }
+  .topbar h1 { font-size: 16px; }
+  .shell { padding: 20px 14px 28px; }
+  .card { padding: 16px; }
+  #app > div > .card { padding-top: 84px; }
+  #app > div > .card > h2,
+  #app > div > .card > div:first-of-type { margin-right: 0; }
+  #app > div > .card::after { top: 14px; right: auto; left: 16px; }
+  #app > .card:only-child table { display: block; max-width: 100%; overflow-x: auto; }
+  /* inbox and sent lists: keep the file name and its action in view on a phone */
+  #app:has(input[type="file"][accept]) th:nth-child(n+3):nth-child(-n+5),
+  #app:has(input[type="file"][accept]) td:nth-child(n+3):nth-child(-n+5) { display: none; }
+  th, td { padding-left: 4px; padding-right: 4px; }
+  td:last-child, th:last-child { padding-right: 0; }
+  #app:has(input[type="file"][accept]) td:nth-child(2) { width: 100%; min-width: 5em; }
+  td button.ghost { padding: 7px 8px; font-size: 12.5px; }
+  #who .muted { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

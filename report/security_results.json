@@ -1,0 +1,420 @@
+{
+  "generated_at": "2026-10-29T04:25:31+00:00",
+  "database": "evidence_test",
+  "python": "3.13.16",
+  "scheme": "AES-256-CBC + HMAC-SHA256 (encrypt-then-MAC), RSA-2048 OAEP/PSS",
+  "summary": {
+    "total": 41,
+    "passed": 41,
+    "failed": 0,
+    "by_category": {
+      "Confidentiality": {
+        "passed": 3,
+        "total": 3
+      },
+      "Integrity": {
+        "passed": 7,
+        "total": 7
+      },
+      "Authenticity": {
+        "passed": 4,
+        "total": 4
+      },
+      "Authorization": {
+        "passed": 8,
+        "total": 8
+      },
+      "Authentication": {
+        "passed": 6,
+        "total": 6
+      },
+      "Replay": {
+        "passed": 3,
+        "total": 3
+      },
+      "Injection": {
+        "passed": 2,
+        "total": 2
+      },
+      "Robustness": {
+        "passed": 4,
+        "total": 4
+      },
+      "Audit": {
+        "passed": 4,
+        "total": 4
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": 1,
+      "category": "Confidentiality",
+      "title": "Server storage holds no plaintext",
+      "expected": "No readable content; ciphertext looks random",
+      "observed": "marker present in stored file: False; entropy 7.999 bits/byte (plaintext 4.56)",
+      "passed": true,
+      "ms": 126.2
+    },
+    {
+      "id": 2,
+      "category": "Confidentiality",
+      "title": "Same file sent twice gives unrelated ciphertext",
+      "expected": "Fresh key and IV per transfer",
+      "observed": "0.38% of ciphertext bytes coincide (chance level is 0.39%)",
+      "passed": true,
+      "ms": 262.2
+    },
+    {
+      "id": 3,
+      "category": "Confidentiality",
+      "title": "A different private key cannot recover the file key",
+      "expected": "RSA-OAEP unwrap fails",
+      "observed": "client check: 'this private key is not the key the sender encrypted for'; raw OAEP unwrap: 'cannot unwrap key: this transfer was not encrypted for your key'",
+      "passed": true,
+      "ms": 237.6
+    },
+    {
+      "id": 4,
+      "category": "Integrity",
+      "title": "One bit flipped in the ciphertext (hash check)",
+      "expected": "Ciphertext SHA-256 mismatch",
+      "observed": "ciphertext hash does not match server metadata",
+      "passed": true,
+      "ms": 171.4
+    },
+    {
+      "id": 5,
+      "category": "Integrity",
+      "title": "One bit flipped, hash check bypassed (MAC check)",
+      "expected": "HMAC-SHA256 fails before decryption",
+      "observed": "MAC verification failed: ciphertext was modified or key is wrong",
+      "passed": true,
+      "ms": 218.8
+    },
+    {
+      "id": 6,
+      "category": "Integrity",
+      "title": "IV modified",
+      "expected": "HMAC covers the IV",
+      "observed": "MAC verification failed: ciphertext was modified or key is wrong",
+      "passed": true,
+      "ms": 195.0
+    },
+    {
+      "id": 7,
+      "category": "Integrity",
+      "title": "MAC tag modified",
+      "expected": "Tag comparison fails",
+      "observed": "MAC verification failed: ciphertext was modified or key is wrong",
+      "passed": true,
+      "ms": 163.7
+    },
+    {
+      "id": 8,
+      "category": "Integrity",
+      "title": "Ciphertext truncated by three blocks",
+      "expected": "Rejected as malformed or by the MAC",
+      "observed": "MAC verification failed: ciphertext was modified or key is wrong",
+      "passed": true,
+      "ms": 182.4
+    },
+    {
+      "id": 9,
+      "category": "Integrity",
+      "title": "Ciphertext swapped for another valid ciphertext",
+      "expected": "Hash mismatch; MAC fails under the right key",
+      "observed": "hash check: 'ciphertext hash does not match server metadata'; MAC under original key: 'MAC verification failed: ciphertext was modified or key is wrong'",
+      "passed": true,
+      "ms": 380.1
+    },
+    {
+      "id": 10,
+      "category": "Integrity",
+      "title": "Stored file altered on the server's disk",
+      "expected": "Server refuses to serve it and audits the event",
+      "observed": "HTTP 500 'stored evidence failed integrity check'; audit entry STORAGE_TAMPER_DETECTED recorded: True",
+      "passed": true,
+      "ms": 214.0
+    },
+    {
+      "id": 11,
+      "category": "Authenticity",
+      "title": "Signature forged with another officer's key",
+      "expected": "Upload rejected: signature invalid",
+      "observed": "HTTP 400: signature verification failed",
+      "passed": true,
+      "ms": 82.3
+    },
+    {
+      "id": 12,
+      "category": "Authenticity",
+      "title": "Any signed field changed after signing",
+      "expected": "Every variant rejected (filename, type, size, recipient)",
+      "observed": "filename→HTTP 400, mime_type→HTTP 400, size→HTTP 400, recipient→HTTP 400",
+      "passed": true,
+      "ms": 317.9
+    },
+    {
+      "id": 13,
+      "category": "Authenticity",
+      "title": "Registering a key without proof of possession",
+      "expected": "Rejected",
+      "observed": "HTTP 400: proof of possession failed",
+      "passed": true,
+      "ms": 76.1
+    },
+    {
+      "id": 14,
+      "category": "Authenticity",
+      "title": "Retired key can no longer sign uploads",
+      "expected": "Old key rejected after rotation",
+      "observed": "HTTP 400: signature verification failed",
+      "passed": true,
+      "ms": 166.6
+    },
+    {
+      "id": 15,
+      "category": "Authorization",
+      "title": "Other investigator requests Bob's evidence",
+      "expected": "404 on metadata and ciphertext",
+      "observed": "metadata→HTTP 404, ciphertext→HTTP 404",
+      "passed": true,
+      "ms": 163.2
+    },
+    {
+      "id": 16,
+      "category": "Authorization",
+      "title": "Sender requests the ciphertext back",
+      "expected": "404: only the receiver can download",
+      "observed": "metadata→HTTP 404, ciphertext→HTTP 404",
+      "passed": true,
+      "ms": 161.2
+    },
+    {
+      "id": 17,
+      "category": "Authorization",
+      "title": "Another officer requests Bob's evidence",
+      "expected": "404",
+      "observed": "metadata→HTTP 404, ciphertext→HTTP 404",
+      "passed": true,
+      "ms": 175.9
+    },
+    {
+      "id": 18,
+      "category": "Authorization",
+      "title": "Administrator requests Bob's evidence",
+      "expected": "404: admins manage users, not evidence",
+      "observed": "metadata→HTTP 404, ciphertext→HTTP 404",
+      "passed": true,
+      "ms": 169.5
+    },
+    {
+      "id": 19,
+      "category": "Authorization",
+      "title": "Unknown and forbidden IDs are indistinguishable",
+      "expected": "Same answer, so IDs cannot be probed",
+      "observed": "existing→404 {'error': 'not found'}, random→404 {'error': 'not found'}",
+      "passed": true,
+      "ms": 251.3
+    },
+    {
+      "id": 20,
+      "category": "Authorization",
+      "title": "Investigator tries to upload evidence",
+      "expected": "403: wrong role",
+      "observed": "HTTP 403: forbidden",
+      "passed": true,
+      "ms": 61.6
+    },
+    {
+      "id": 21,
+      "category": "Authorization",
+      "title": "Non-admins read the audit log",
+      "expected": "403 for officer and investigator",
+      "observed": "officer→HTTP 403, investigator→HTTP 403",
+      "passed": true,
+      "ms": 154.9
+    },
+    {
+      "id": 22,
+      "category": "Authorization",
+      "title": "Inbox shows only your own evidence",
+      "expected": "Carol's inbox is empty",
+      "observed": "bob sees 18, carol sees 0",
+      "passed": true,
+      "ms": 210.5
+    },
+    {
+      "id": 23,
+      "category": "Authentication",
+      "title": "Request without a token",
+      "expected": "401",
+      "observed": "HTTP 401",
+      "passed": true,
+      "ms": 2.7
+    },
+    {
+      "id": 24,
+      "category": "Authentication",
+      "title": "Invented token",
+      "expected": "401",
+      "observed": "HTTP 401",
+      "passed": true,
+      "ms": 38.5
+    },
+    {
+      "id": 25,
+      "category": "Authentication",
+      "title": "Expired token",
+      "expected": "401",
+      "observed": "HTTP 401",
+      "passed": true,
+      "ms": 112.6
+    },
+    {
+      "id": 26,
+      "category": "Authentication",
+      "title": "Token used after logout",
+      "expected": "401",
+      "observed": "HTTP 401",
+      "passed": true,
+      "ms": 88.3
+    },
+    {
+      "id": 27,
+      "category": "Authentication",
+      "title": "Password guessing",
+      "expected": "Account locks after 5 failures, even for the right password",
+      "observed": "5 wrong guesses→[401, 401, 401, 401, 401]; correct password afterwards→HTTP 429 (account temporarily locked)",
+      "passed": true,
+      "ms": 209.6
+    },
+    {
+      "id": 28,
+      "category": "Authentication",
+      "title": "Passwords and tokens are stored hashed",
+      "expected": "No plaintext secrets in the database",
+      "observed": "password stored as 'pbkdf2:sha256:1000$PeW…', session token stored as SHA-256 '0edeeab1aeca1d0d…'",
+      "passed": true,
+      "ms": 115.2
+    },
+    {
+      "id": 29,
+      "category": "Replay",
+      "title": "Exact copy of an upload resent",
+      "expected": "409: nonce already used",
+      "observed": "HTTP 409: replay detected (nonce already used)",
+      "passed": true,
+      "ms": 159.1
+    },
+    {
+      "id": 30,
+      "category": "Replay",
+      "title": "Upload signed an hour ago",
+      "expected": "400: outside the ±300 s window",
+      "observed": "HTTP 400: timestamp outside allowed window",
+      "passed": true,
+      "ms": 98.0
+    },
+    {
+      "id": 31,
+      "category": "Replay",
+      "title": "Upload signed an hour in the future",
+      "expected": "400",
+      "observed": "HTTP 400: timestamp outside allowed window",
+      "passed": true,
+      "ms": 93.4
+    },
+    {
+      "id": 32,
+      "category": "Injection",
+      "title": "SQL injection and path traversal in the transfer ID",
+      "expected": "404; database untouched",
+      "observed": "statuses [404, 404, 404, 404, 404]; users table 5→5 rows",
+      "passed": true,
+      "ms": 185.2
+    },
+    {
+      "id": 33,
+      "category": "Injection",
+      "title": "SQL injection in the login form",
+      "expected": "401; no bypass",
+      "observed": "statuses [401, 401]",
+      "passed": true,
+      "ms": 273.4
+    },
+    {
+      "id": 34,
+      "category": "Robustness",
+      "title": "Upload larger than the limit",
+      "expected": "413",
+      "observed": "HTTP 413 (limit set to 2 MB for this run)",
+      "passed": true,
+      "ms": 57.6
+    },
+    {
+      "id": 35,
+      "category": "Robustness",
+      "title": "Upload that is not an EVC1 envelope",
+      "expected": "400",
+      "observed": "HTTP 400: ciphertext is not a valid EVC1 envelope",
+      "passed": true,
+      "ms": 81.7
+    },
+    {
+      "id": 36,
+      "category": "Robustness",
+      "title": "Connection dropped mid-upload",
+      "expected": "No half-stored transfer remains",
+      "observed": "transfers/files before (19, 19), after (19, 19)",
+      "passed": true,
+      "ms": 1587.8
+    },
+    {
+      "id": 37,
+      "category": "Robustness",
+      "title": "Server unreachable",
+      "expected": "Client fails fast with a clear error",
+      "observed": "ConnectionError after 0.00s (no hang, nothing stored)",
+      "passed": true,
+      "ms": 1.0
+    },
+    {
+      "id": 38,
+      "category": "Audit",
+      "title": "Chain of custody verifies after all the activity above",
+      "expected": "Chain intact",
+      "observed": "128 entries, intact=True",
+      "passed": true,
+      "ms": 59.8
+    },
+    {
+      "id": 39,
+      "category": "Audit",
+      "title": "A log entry is edited in the database",
+      "expected": "Chain breaks at that entry",
+      "observed": "edited entry #1; verifier reports ok=False, first bad entry #1",
+      "passed": true,
+      "ms": 151.4
+    },
+    {
+      "id": 40,
+      "category": "Audit",
+      "title": "A log entry is deleted from the database",
+      "expected": "Chain breaks",
+      "observed": "deleted entry #5; verifier reports ok=False",
+      "passed": true,
+      "ms": 150.2
+    },
+    {
+      "id": 41,
+      "category": "Audit",
+      "title": "Chain verifies again once the rows are restored",
+      "expected": "Chain intact (proves the checks above were real)",
+      "observed": "131 entries, intact=True",
+      "passed": true,
+      "ms": 60.5
+    }
+  ]
+}

@@ -1,0 +1,564 @@
+{
+  "generated_at": "2026-10-29T04:29:32+00:00",
+  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+  "tool": "dumpcap + tshark",
+  "interface": "lo",
+  "note": "Captured on the loopback interface of the machine that ran this script. Re-run it on your own computer to replace these numbers with your own.",
+  "evidence_bytes": 105000,
+  "scenarios": [
+    {
+      "id": "A",
+      "title": "Insecure baseline: plain text over HTTP",
+      "transport": "http",
+      "port": 36545,
+      "packets": 62,
+      "wire_bytes": 217337,
+      "plaintext_bytes": 105000,
+      "duration_ms": 10.0,
+      "run_ms": 2046.6,
+      "protocols": {
+        "TCP": 54,
+        "HTTP/JSON": 7,
+        "HTTP": 1
+      },
+      "tls": null,
+      "findings": [
+        {
+          "id": "evidence",
+          "label": "Evidence content (the witness statement)",
+          "meaning": "The eavesdropper can read the evidence itself.",
+          "applicable": true,
+          "visible": true,
+          "count": 1400
+        },
+        {
+          "id": "password",
+          "label": "Login password",
+          "meaning": "The eavesdropper can sign in as the user.",
+          "applicable": true,
+          "visible": true,
+          "count": 2
+        },
+        {
+          "id": "token",
+          "label": "Session token",
+          "meaning": "The eavesdropper can act as the user until the token expires.",
+          "applicable": true,
+          "visible": true,
+          "count": 2
+        },
+        {
+          "id": "filename",
+          "label": "File name",
+          "meaning": "The eavesdropper learns what the file is called.",
+          "applicable": true,
+          "visible": true,
+          "count": 2
+        },
+        {
+          "id": "usernames",
+          "label": "User names (alice, bob)",
+          "meaning": "The eavesdropper learns who is talking to whom.",
+          "applicable": true,
+          "visible": true,
+          "count": 4
+        },
+        {
+          "id": "envelope",
+          "label": "Encrypted envelope header (EVC1)",
+          "meaning": "The eavesdropper can see that an encrypted file was sent, but not read it.",
+          "applicable": false,
+          "visible": null,
+          "count": 0
+        },
+        {
+          "id": "signature",
+          "label": "Sender signature / wrapped key",
+          "meaning": "Public cryptographic metadata: useless without the private keys.",
+          "applicable": false,
+          "visible": null,
+          "count": 0
+        }
+      ],
+      "summary_lines": [
+        {
+          "no": 1,
+          "t": 0.0,
+          "length": 74,
+          "proto": "TCP",
+          "info": "49118 \u2192 36545 [SYN] Seq=0 Win=65495 Len=0 MSS=65495 SACK_PERM TSval=3463228199 TSecr=0 WS=1024"
+        },
+        {
+          "no": 2,
+          "t": 0.0,
+          "length": 74,
+          "proto": "TCP",
+          "info": "36545 \u2192 49118 [SYN, ACK] Seq=0 Ack=1 Win=65483 Len=0 MSS=65495 SACK_PERM TSval=3217828910 TSecr=3463228199 WS="
+        },
+        {
+          "no": 3,
+          "t": 0.0,
+          "length": 66,
+          "proto": "TCP",
+          "info": "49118 \u2192 36545 [ACK] Seq=1 Ack=1 Win=65536 Len=0 TSval=3463228199 TSecr=3217828910"
+        },
+        {
+          "no": 4,
+          "t": 0.0001,
+          "length": 270,
+          "proto": "TCP",
+          "info": "POST /login HTTP/1.1  [TCP segment of a reassembled PDU]"
+        },
+        {
+          "no": 5,
+          "t": 0.0001,
+          "length": 66,
+          "proto": "TCP",
+          "info": "36545 \u2192 49118 [ACK] Seq=1 Ack=205 Win=65536 Len=0 TSval=3217828910 TSecr=3463228199"
+        },
+        {
+          "no": 6,
+          "t": 0.0001,
+          "length": 119,
+          "proto": "HTTP/JSON",
+          "info": "POST /login HTTP/1.1 , JSON (application/json)"
+        },
+        {
+          "no": 7,
+          "t": 0.0001,
+          "length": 66,
+          "proto": "TCP",
+          "info": "36545 \u2192 49118 [ACK] Seq=1 Ack=258 Win=65536 Len=0 TSval=3217828910 TSecr=3463228199"
+        },
+        {
+          "no": 8,
+          "t": 0.0012,
+          "length": 211,
+          "proto": "TCP",
+          "info": "HTTP/1.0 200 OK  [TCP segment of a reassembled PDU]"
+        },
+        {
+          "no": 9,
+          "t": 0.0012,
+          "length": 66,
+          "proto": "TCP",
+          "info": "49118 \u2192 36545 [ACK] Seq=258 Ack=146 Win=65536 Len=0 TSval=3463228200 TSecr=3217828911"
+        },
+        {
+          "no": 10,
+          "t": 0.0018,
+          "length": 104,
+          "proto": "HTTP/JSON",
+          "info": "HTTP/1.0 200 OK , JSON (application/json)"
+        },
+        {
+          "no": 11,
+          "t": 0.0018,
+          "length": 66,
+          "proto": "TCP",
+          "info": "49118 \u2192 36545 [ACK] Seq=258 Ack=184 Win=65536 Len=0 TSval=3463228201 TSecr=3217828912"
+        },
+        {
+          "no": 12,
+          "t": 0.0019,
+          "length": 66,
+          "proto": "TCP",
+          "info": "36545 \u2192 49118 [FIN, ACK] Seq=184 Ack=258 Win=65536 Len=0 TSval=3217828912 TSecr=3463228201"
+        },
+        {
+          "no": 13,
+          "t": 0.002,
+          "length": 66,
+          "proto": "TCP",
+          "info": "49118 \u2192 36545 [FIN, ACK] Seq=258 Ack=185 Win=65536 Len=0 TSval=3463228201 TSecr=3217828912"
+        },
+        {
+          "no": 14,
+          "t": 0.002,
+          "length": 66,
+          "proto": "TCP",
+          "info": "36545 \u2192 49118 [ACK] Seq=185 Ack=259 Win=65536 Len=0 TSval=3217828912 TSecr=3463228201"
+        }
+      ],
+      "stream_excerpt": {
+        "client_to_server": "POST /login HTTP/1.1\nHost: 127.0.0.1:36545\nUser-Agent: python-requests/2.34.2\nAccept-Encoding: gzip, deflate\nAccept: */*\nConnection: keep-alive\nContent-Length: 53\nContent-Type: application/json\n\n{\"username\": \"alice\", \"password\": \"Cap-KtMrD66O6UJM\"}POST /upload HTTP/1.1\nHost: 127.0.0.1:36545\nUser-Agent: python-requests/2.34.2\nAccept-Encoding: gzip, deflate\nAccept: */*\nConnection: keep-alive\nAuthorization: Bearer baseline-25e300c7d4737838\nContent-Length: 105765\nContent-Type: application/json\n\n{\"filename\": \"witness_statement.txt\", \"to\": \"bob\", \"content\": \"CASE 2026-0417 WITNESS STATEMENT: I saw the grey van leave the loading dock at 21:40 and turn towards the harbour road. Th",
+        "server_to_client": "HTTP/1.0 200 OK\nServer: BaseHTTP/0.6 Python/3.13.16\nDate: Thu, 29 Oct 2026 04:29:22 GMT\nContent-Type: application/json\nContent-Length: 38\n\n{\"token\": \"baseline-25e300c7d4737838\"}HTTP/1.0 201 Created\nServer: BaseHTTP/0.6 Python/3.13.16\nDate: Thu, 29 Oct 2026 04:29:22 GMT\nContent-Type: application/json\nContent-Length: 11\n\n{\"id\": \"1\"}HTTP/1.0 200 OK\nServer: BaseHTTP/0.6 Python/3.13.16\nDa"
+      },
+      "pcap": "captures/A_insecure_baseline_http.pcap"
+    },
+    {
+      "id": "B",
+      "title": "This system over HTTP (no TLS)",
+      "transport": "http",
+      "port": 39615,
+      "packets": 99,
+      "wire_bytes": 228490,
+      "plaintext_bytes": 105000,
+      "duration_ms": 203.0,
+      "run_ms": 2238.9,
+      "protocols": {
+        "TCP": 85,
+        "HTTP/JSON": 8,
+        "HTTP": 6
+      },
+      "tls": null,
+      "findings": [
+        {
+          "id": "evidence",
+          "label": "Evidence content (the witness statement)",
+          "meaning": "The eavesdropper can read the evidence itself.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "password",
+          "label": "Login password",
+          "meaning": "The eavesdropper can sign in as the user.",
+          "applicable": true,
+          "visible": true,
+          "count": 2
+        },
+        {
+          "id": "token",
+          "label": "Session token",
+          "meaning": "The eavesdropper can act as the user until the token expires.",
+          "applicable": true,
+          "visible": true,
+          "count": 3
+        },
+        {
+          "id": "filename",
+          "label": "File name",
+          "meaning": "The eavesdropper learns what the file is called.",
+          "applicable": true,
+          "visible": true,
+          "count": 3
+        },
+        {
+          "id": "usernames",
+          "label": "User names (alice, bob)",
+          "meaning": "The eavesdropper learns who is talking to whom.",
+          "applicable": true,
+          "visible": true,
+          "count": 3
+        },
+        {
+          "id": "envelope",
+          "label": "Encrypted envelope header (EVC1)",
+          "meaning": "The eavesdropper can see that an encrypted file was sent, but not read it.",
+          "applicable": true,
+          "visible": true,
+          "count": 2
+        },
+        {
+          "id": "signature",
+          "label": "Sender signature / wrapped key",
+          "meaning": "Public cryptographic metadata: useless without the private keys.",
+          "applicable": true,
+          "visible": true,
+          "count": 6
+        }
+      ],
+      "summary_lines": [
+        {
+          "no": 1,
+          "t": 0.0,
+          "length": 74,
+          "proto": "TCP",
+          "info": "42960 \u2192 39615 [SYN] Seq=0 Win=65495 Len=0 MSS=65495 SACK_PERM TSval=3046567930 TSecr=0 WS=1024"
+        },
+        {
+          "no": 2,
+          "t": 0.0,
+          "length": 74,
+          "proto": "TCP",
+          "info": "39615 \u2192 42960 [SYN, ACK] Seq=0 Ack=1 Win=65483 Len=0 MSS=65495 SACK_PERM TSval=328029189 TSecr=3046567930 WS=1"
+        },
+        {
+          "no": 3,
+          "t": 0.0,
+          "length": 66,
+          "proto": "TCP",
+          "info": "42960 \u2192 39615 [ACK] Seq=1 Ack=1 Win=65536 Len=0 TSval=3046567930 TSecr=328029189"
+        },
+        {
+          "no": 4,
+          "t": 0.0004,
+          "length": 274,
+          "proto": "TCP",
+          "info": "POST /api/login HTTP/1.1  [TCP segment of a reassembled PDU]"
+        },
+        {
+          "no": 5,
+          "t": 0.0004,
+          "length": 66,
+          "proto": "TCP",
+          "info": "39615 \u2192 42960 [ACK] Seq=1 Ack=209 Win=65536 Len=0 TSval=328029189 TSecr=3046567930"
+        },
+        {
+          "no": 6,
+          "t": 0.0012,
+          "length": 119,
+          "proto": "HTTP/JSON",
+          "info": "POST /api/login HTTP/1.1 , JSON (application/json)"
+        },
+        {
+          "no": 7,
+          "t": 0.0012,
+          "length": 66,
+          "proto": "TCP",
+          "info": "39615 \u2192 42960 [ACK] Seq=1 Ack=262 Win=65536 Len=0 TSval=328029190 TSecr=3046567931"
+        },
+        {
+          "no": 8,
+          "t": 0.0273,
+          "length": 465,
+          "proto": "TCP",
+          "info": "HTTP/1.1 200 OK  [TCP segment of a reassembled PDU]"
+        },
+        {
+          "no": 9,
+          "t": 0.0274,
+          "length": 66,
+          "proto": "TCP",
+          "info": "42960 \u2192 39615 [ACK] Seq=262 Ack=400 Win=65536 Len=0 TSval=3046567957 TSecr=328029216"
+        },
+        {
+          "no": 10,
+          "t": 0.0274,
+          "length": 182,
+          "proto": "HTTP/JSON",
+          "info": "HTTP/1.1 200 OK , JSON (application/json)"
+        },
+        {
+          "no": 11,
+          "t": 0.0274,
+          "length": 66,
+          "proto": "TCP",
+          "info": "42960 \u2192 39615 [ACK] Seq=262 Ack=516 Win=65536 Len=0 TSval=3046567957 TSecr=328029216"
+        },
+        {
+          "no": 12,
+          "t": 0.0279,
+          "length": 66,
+          "proto": "TCP",
+          "info": "42960 \u2192 39615 [FIN, ACK] Seq=262 Ack=516 Win=65536 Len=0 TSval=3046567958 TSecr=328029216"
+        },
+        {
+          "no": 13,
+          "t": 0.029,
+          "length": 74,
+          "proto": "TCP",
+          "info": "42962 \u2192 39615 [SYN] Seq=0 Win=65495 Len=0 MSS=65495 SACK_PERM TSval=2048462305 TSecr=0 WS=1024"
+        },
+        {
+          "no": 14,
+          "t": 0.029,
+          "length": 74,
+          "proto": "TCP",
+          "info": "39615 \u2192 42962 [SYN, ACK] Seq=0 Ack=1 Win=65483 Len=0 MSS=65495 SACK_PERM TSval=2527744980 TSecr=2048462305 WS="
+        }
+      ],
+      "stream_excerpt": {
+        "client_to_server": "POST /api/login HTTP/1.1\nHost: 127.0.0.1:39615\nUser-Agent: python-requests/2.34.2\nAccept-Encoding: gzip, deflate\nAccept: */*\nConnection: keep-alive\nContent-Length: 53\nContent-Type: application/json\n\n{\"username\": \"alice\", \"password\": \"Cap-KtMrD66O6UJM\"}POST /api/login HTTP/1.1\nHost: 127.0.0.1:39615\nUser-Agent: python-requests/2.34.2\nAccept-Encoding: gzip, deflate\nAccept: */*\nConnection: keep-alive\nContent-Length: 51\nContent-Type: application/json\n\n{\"username\": \"bob\", \"password\": \"Cap-vgeHAMt78PNM\"}GET /api/recipients HTTP/1.1\nHost: 127.0.0.1:39615\nUser-Agent: python-requests/2.34.2\nAccept-Encoding: gzip, deflate\nAccept: */*\nConnection: keep-alive\nAuthorization: Bearer ",
+        "server_to_client": "HTTP/1.1 200 OK\nServer: Werkzeug/3.1.8 Python/3.13.16\nDate: Thu, 29 Oct 2026 04:29:26 GMT\nContent-Type: application/json\nContent-Length: 116\nX-Content-Type-Options: nosniff\nX-Frame-Options: DENY\nContent-Security-Policy: default-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; frame-ancestors 'none'\nReferrer-Policy: no-referrer\nCache-Control: no-store\nConnection: close\n\n{"
+      },
+      "pcap": "captures/B_this_system_http.pcap"
+    },
+    {
+      "id": "C",
+      "title": "This system over HTTPS (TLS)",
+      "transport": "https",
+      "port": 39755,
+      "packets": 127,
+      "wire_bytes": 243867,
+      "plaintext_bytes": 105000,
+      "duration_ms": 338.8,
+      "run_ms": 2375.6,
+      "protocols": {
+        "TCP": 63,
+        "TLSv1": 7,
+        "TLSv1.3": 57
+      },
+      "tls": {
+        "version": "TLS 1.3",
+        "cipher_suite": "TLS_AES_256_GCM_SHA384"
+      },
+      "findings": [
+        {
+          "id": "evidence",
+          "label": "Evidence content (the witness statement)",
+          "meaning": "The eavesdropper can read the evidence itself.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "password",
+          "label": "Login password",
+          "meaning": "The eavesdropper can sign in as the user.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "token",
+          "label": "Session token",
+          "meaning": "The eavesdropper can act as the user until the token expires.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "filename",
+          "label": "File name",
+          "meaning": "The eavesdropper learns what the file is called.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "usernames",
+          "label": "User names (alice, bob)",
+          "meaning": "The eavesdropper learns who is talking to whom.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "envelope",
+          "label": "Encrypted envelope header (EVC1)",
+          "meaning": "The eavesdropper can see that an encrypted file was sent, but not read it.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        },
+        {
+          "id": "signature",
+          "label": "Sender signature / wrapped key",
+          "meaning": "Public cryptographic metadata: useless without the private keys.",
+          "applicable": true,
+          "visible": false,
+          "count": 0
+        }
+      ],
+      "summary_lines": [
+        {
+          "no": 1,
+          "t": 0.0,
+          "length": 74,
+          "proto": "TCP",
+          "info": "48716 \u2192 39755 [SYN] Seq=0 Win=65495 Len=0 MSS=65495 SACK_PERM TSval=1336015324 TSecr=0 WS=1024"
+        },
+        {
+          "no": 2,
+          "t": 0.0,
+          "length": 74,
+          "proto": "TCP",
+          "info": "39755 \u2192 48716 [SYN, ACK] Seq=0 Ack=1 Win=65483 Len=0 MSS=65495 SACK_PERM TSval=3128011116 TSecr=1336015324 WS="
+        },
+        {
+          "no": 3,
+          "t": 0.0,
+          "length": 66,
+          "proto": "TCP",
+          "info": "48716 \u2192 39755 [ACK] Seq=1 Ack=1 Win=65536 Len=0 TSval=1336015324 TSecr=3128011116"
+        },
+        {
+          "no": 4,
+          "t": 0.0018,
+          "length": 583,
+          "proto": "TLSv1",
+          "info": "Client Hello"
+        },
+        {
+          "no": 5,
+          "t": 0.0019,
+          "length": 66,
+          "proto": "TCP",
+          "info": "39755 \u2192 48716 [ACK] Seq=1 Ack=518 Win=65536 Len=0 TSval=3128011117 TSecr=1336015325"
+        },
+        {
+          "no": 6,
+          "t": 0.0023,
+          "length": 776,
+          "proto": "TLSv1.3",
+          "info": "Server Hello, Change Cipher Spec, Application Data, Application Data, Application Data, Application Data"
+        },
+        {
+          "no": 7,
+          "t": 0.0023,
+          "length": 66,
+          "proto": "TCP",
+          "info": "48716 \u2192 39755 [ACK] Seq=518 Ack=711 Win=65536 Len=0 TSval=1336015326 TSecr=3128011118"
+        },
+        {
+          "no": 8,
+          "t": 0.0036,
+          "length": 146,
+          "proto": "TLSv1.3",
+          "info": "Change Cipher Spec, Application Data"
+        },
+        {
+          "no": 9,
+          "t": 0.0038,
+          "length": 321,
+          "proto": "TLSv1.3",
+          "info": "Application Data"
+        },
+        {
+          "no": 10,
+          "t": 0.0039,
+          "length": 296,
+          "proto": "TLSv1.3",
+          "info": "Application Data"
+        },
+        {
+          "no": 11,
+          "t": 0.004,
+          "length": 321,
+          "proto": "TLSv1.3",
+          "info": "Application Data"
+        },
+        {
+          "no": 12,
+          "t": 0.0041,
+          "length": 141,
+          "proto": "TLSv1.3",
+          "info": "Application Data"
+        },
+        {
+          "no": 13,
+          "t": 0.046,
+          "length": 66,
+          "proto": "TCP",
+          "info": "39755 \u2192 48716 [ACK] Seq=1221 Ack=903 Win=65536 Len=0 TSval=3128011162 TSecr=1336015328"
+        },
+        {
+          "no": 14,
+          "t": 0.0676,
+          "length": 487,
+          "proto": "TLSv1.3",
+          "info": "Application Data"
+        }
+      ],
+      "stream_excerpt": {
+        "client_to_server": "............b..m...T.;.......w..._XX.q..2.. \n8.c<.r...s...Y:..$p..U..........$.......,.0.+./.....$.(.#.'.....k.g...............\n...............................http/1.1.........1...\r.*.(.............\n...........................+........-.....3.&.$... ..j=.nt@....E..^[.[..-.....Z.W.p.....................................................................................................................................................................................................................................................E..f.t.chZ......8d.[..`..O=..C...~...k.....{^.k...].a.....c.G.......~......\r..4.Q..\n@...4.2.....A...G.QR..F..?.......q.t.....G.x.=(\r.)7..k\".z.k..A.Ro$g..B..P[.P... .u.;..IUw",
+        "server_to_client": "....z...v...U..O..8>..\n..C...D7..V.l...:p.. \n8.c<.r...s...Y:..$p..U...............+.....3.$... \n..U.t@&.=..5......j..s.5...%..I...........:..&a......-.!Nk.W..'.h....p\rF/......hc.......B7..d5.>..s^+..,......E..J..HRB^.?@r\"0.!,.....s...u..p}<....u..%.%......|........!.`....c...'...I.G......j....<....A...#=......)]..wQ..g..........uxM.....,....hzd.7...{...........W`ty..\"\\...\n.B#.0......)....?.m.^OH!."
+      },
+      "pcap": "captures/C_this_system_https.pcap"
+    }
+  ],
+  "key_findings": [
+    "A: with no encryption, the evidence, the password and the session token are all readable in the capture.",
+    "B: the evidence is unreadable even without TLS, because the file is encrypted in the browser before it is sent. The password and session token are still visible over plain HTTP, so TLS is still needed.",
+    "C: with TLS added, none of the markers can be found: user names, file name, password and token are hidden too. Negotiated TLS 1.3 with TLS_AES_256_GCM_SHA384."
+  ],
+  "how_to": [
+    "Wireshark: File > Open, choose a .pcap from report/captures/",
+    "Follow a stream: right click a packet > Follow > TCP Stream",
+    "Display filters: http.request.method == \"POST\"   |   tls.handshake.type == 1   |   frame contains \"alice\"",
+    "To decode the plain HTTP captures: Analyze > Decode As... > TCP port > HTTP (use the port in the report)"
+  ]
+}

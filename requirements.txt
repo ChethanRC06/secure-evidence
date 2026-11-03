@@ -1,0 +1,7 @@
+Flask>=3.0
+Flask-Limiter>=3.5
+PyMySQL>=1.1
+cryptography>=42
+requests>=2.31
+pytest>=8
+Pillow>=10
